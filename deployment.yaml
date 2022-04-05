@@ -16,7 +16,7 @@ spec:
         app: wordpress
     spec:
       containers:
-        - image: gcr.io/asp-pprd/wordpress_custom_image:VERSION
+        - image: gcr.io/asp-pprd/wordpress_custom_image:TAG
           name: wordpress
           env:
           - name: WORDPRESS_DB_HOST
