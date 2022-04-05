@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wordpress
+  namespace: wordpress
+  labels:
+    app: wordpress
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wordpress
+  template:
+    metadata:
+      labels:
+        app: wordpress
+    spec:
+      containers:
+        - image: gcr.io/asp-pprd/wordpress_custom_image:VERSION
+          name: wordpress
+          env:
+          - name: WORDPRESS_DB_HOST
+            valueFrom:
+              secretKeyRef:
+                name: wp-db-secret
+                key: db_host
+          - name: WORDPRESS_DB_NAME
+            valueFrom:
+              secretKeyRef:
+                name: wp-db-secret
+                key: db_name
+          - name: WORDPRESS_DB_USER
+            valueFrom:
+              secretKeyRef:
+                name: wp-db-secret
+                key: username
+          - name: WORDPRESS_DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: wp-db-secret
+                key: password
+          ports:
+            - containerPort: 80
+              name: wordpress
+          volumeMounts:
+            - name: wordpress-persistent-storage
+              mountPath: /var/www/html/wp-content
+      volumes:
+        - name: wordpress-persistent-storage
+          persistentVolumeClaim:
+            claimName: wordpress-volumeclaim
